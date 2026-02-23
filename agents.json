@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "last_updated": "2026-02-23",
   "agents": [
     {
@@ -30,8 +30,46 @@
           }
         ]
       },
-      "env_vars": ["DATAGEN_API_KEY"],
+      "secrets": [
+        {
+          "name": "DATAGEN_API_KEY",
+          "description": "DataGen platform API key (get from app.datagen.dev)",
+          "required": true
+        }
+      ],
       "path": "templates/linkedin-engagement"
+    },
+    {
+      "id": "instantly-health-report",
+      "name": "Email Infrastructure Health Report",
+      "description": "Weekly email infrastructure health report. Fetches Instantly analytics (domain health, campaign performance, inbox status), generates a branded HTML report with benchmarks and AI-written recommendations, and emails it via Gmail.",
+      "category": "email-ops",
+      "tags": ["instantly", "email", "health-report", "deliverability", "domain-health"],
+      "status": "coming-soon",
+      "datagen_tools": [],
+      "datagen_mcps": {
+        "required": [
+          {
+            "name": "Gmail",
+            "alternatives": [],
+            "purpose": "Send the HTML health report via email"
+          }
+        ],
+        "optional": []
+      },
+      "secrets": [
+        {
+          "name": "DATAGEN_API_KEY",
+          "description": "DataGen platform API key (get from app.datagen.dev)",
+          "required": true
+        },
+        {
+          "name": "INSTANTLY_API_KEY",
+          "description": "Instantly API key for fetching domain health, campaign, and inbox analytics",
+          "required": true
+        }
+      ],
+      "path": null
     },
     {
       "id": "signup-enrichment",
@@ -59,7 +97,13 @@
           }
         ]
       },
-      "env_vars": ["DATAGEN_API_KEY"],
+      "secrets": [
+        {
+          "name": "DATAGEN_API_KEY",
+          "description": "DataGen platform API key (get from app.datagen.dev)",
+          "required": true
+        }
+      ],
       "path": null
     },
     {
@@ -86,7 +130,13 @@
           }
         ]
       },
-      "env_vars": ["DATAGEN_API_KEY"],
+      "secrets": [
+        {
+          "name": "DATAGEN_API_KEY",
+          "description": "DataGen platform API key (get from app.datagen.dev)",
+          "required": true
+        }
+      ],
       "path": null
     },
     {
@@ -116,7 +166,13 @@
           }
         ]
       },
-      "env_vars": ["DATAGEN_API_KEY"],
+      "secrets": [
+        {
+          "name": "DATAGEN_API_KEY",
+          "description": "DataGen platform API key (get from app.datagen.dev)",
+          "required": true
+        }
+      ],
       "path": null
     },
     {
@@ -142,7 +198,13 @@
           }
         ]
       },
-      "env_vars": ["DATAGEN_API_KEY"],
+      "secrets": [
+        {
+          "name": "DATAGEN_API_KEY",
+          "description": "DataGen platform API key (get from app.datagen.dev)",
+          "required": true
+        }
+      ],
       "path": null
     }
   ]
