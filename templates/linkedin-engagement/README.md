@@ -16,7 +16,6 @@ Each step outputs to `tmp/` as JSON. The agent reviews results between steps and
 
 - DataGen account with API key ([app.datagen.dev](https://app.datagen.dev))
 - Python 3.10+ with pip
-- A Neon (or any Postgres) database
 
 ## Required Tools and Services
 
@@ -27,7 +26,7 @@ LinkedIn tools are included with your DataGen account -- just need a valid `DATA
 
 ### External MCP servers (connect at [app.datagen.dev/tools](https://app.datagen.dev/tools))
 
-- **Neon** (required): Serverless Postgres for structured storage
+- **Database** (required, pick one): **Neon** or **Supabase** -- the agent auto-detects which is connected
 - **Linkup** (optional): Web search fallback when LinkedIn URL is unavailable
 
 ## Quick Start
@@ -49,34 +48,27 @@ LinkedIn tools are included with your DataGen account -- just need a valid `DATA
 
 2. Install Python dependencies:
    ```bash
-   pip install datagen-python-sdk psycopg2-binary
+   pip install datagen-python-sdk
    ```
 
 3. Set environment variables:
    ```bash
    export DATAGEN_API_KEY=<your-key>
-   export DATABASE_URL=postgresql://user:pass@host/dbname?sslmode=require
    ```
 
-4. Create database tables (see `context/data-model.md` for the full schema):
+4. Connect a database MCP at [app.datagen.dev/tools](https://app.datagen.dev/tools):
+   - **Neon** (recommended for quick setup) or **Supabase** (if you already use it)
+   - The agent auto-detects which provider is connected
+
+5. Create database tables (the agent runs this SQL via the connected MCP):
    ```sql
-   CREATE TABLE monitored_profiles (...);
-   CREATE TABLE posts (...);
-   CREATE TABLE engagements (...);
-   CREATE TABLE contacts (...);
-   CREATE TABLE companies (...);
+   CREATE TABLE IF NOT EXISTS monitored_profiles (...);
+   CREATE TABLE IF NOT EXISTS posts (...);
+   CREATE TABLE IF NOT EXISTS engagements (...);
+   CREATE TABLE IF NOT EXISTS contacts (...);
+   CREATE TABLE IF NOT EXISTS companies (...);
    ```
-
-5. Add a profile to monitor:
-   ```bash
-   python3 -c "
-   from scripts.db import execute
-   execute('''
-       INSERT INTO monitored_profiles (linkedin_url, name, why_monitoring, status, check_frequency)
-       VALUES (%s, %s, %s, 'active', 'daily')
-   ''', ('https://www.linkedin.com/in/SLUG', 'Display Name', 'Reason'))
-   "
-   ```
+   See `context/data-model.md` for the full schema.
 
 6. Run the agent in Claude Code:
    ```
@@ -88,7 +80,7 @@ LinkedIn tools are included with your DataGen account -- just need a valid `DATA
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `DATAGEN_API_KEY` | Yes | Your DataGen API key |
-| `DATABASE_URL` | Yes | Postgres connection string |
+| `DATAGEN_DB_TOOL` | No | Override database MCP tool name (e.g., `mcp_Supabase_run_sql`) |
 | `MAX_POSTS` | No | Max posts to process per run (default: 2) |
 | `MAX_ENRICH` | No | Max contacts to enrich per run (default: 3) |
 

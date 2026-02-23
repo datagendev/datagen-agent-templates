@@ -2,7 +2,7 @@
   "id": "linkedin-engagement",
   "name": "LinkedIn Engagement Monitor",
   "description": "Monitor LinkedIn profiles, capture engagers, enrich and export.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "category": "sales",
   "tags": ["linkedin", "prospecting", "enrichment"],
   "author": "datagen",
@@ -31,9 +31,10 @@
     ],
     "datagen_mcps": [
       {
-        "name": "Neon",
-        "description": "Serverless Postgres for storing contacts and engagements",
-        "tools_used": ["mcp_Neon_run_sql"],
+        "name": "Database",
+        "description": "Postgres database for storing contacts and engagements",
+        "alternatives": ["Neon", "Supabase"],
+        "tools_used": ["mcp_Neon_run_sql", "mcp_Supabase_run_sql"],
         "required": true,
         "setup_url": "https://app.datagen.dev/tools"
       },
@@ -46,10 +47,9 @@
       }
     ],
     "env_vars": [
-      { "name": "DATAGEN_API_KEY", "required": true },
-      { "name": "DATABASE_URL", "required": true }
+      { "name": "DATAGEN_API_KEY", "required": true }
     ],
-    "python_packages": ["datagen-python-sdk>=0.2.0", "psycopg2-binary"]
+    "python_packages": ["datagen-python-sdk>=0.2.0"]
   },
   "shared_skills": ["datagen-setup"],
   "install_target": ".claude/agents/linkedin-engagement"

@@ -14,7 +14,7 @@ import os
 import uuid
 from datetime import datetime, timezone
 
-from db import TMP_DIR, get_conn, query, save_json
+from db import TMP_DIR, execute, execute_many, query, save_json
 
 
 def get_unlinked_engagements():
@@ -100,42 +100,33 @@ def main():
                 by_slug[slug] = contact_id
             by_url[author_url] = contact_id
 
-    # Write to DB
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            # Insert new contacts
-            if new_contacts:
-                from psycopg2.extras import execute_batch
+    # Insert new contacts
+    if new_contacts:
+        execute_many("""
+            INSERT INTO contacts (contact_id, slug, author_url,
+                enrichment_status, times_seen, first_seen_at, last_seen_at, exported)
+            VALUES (%(contact_id)s, %(slug)s, %(author_url)s,
+                %(enrichment_status)s, %(times_seen)s, %(first_seen_at)s, %(last_seen_at)s, %(exported)s)
+            ON CONFLICT (contact_id) DO NOTHING
+        """, new_contacts)
 
-                execute_batch(cur, """
-                    INSERT INTO contacts (contact_id, slug, author_url,
-                        enrichment_status, times_seen, first_seen_at, last_seen_at, exported)
-                    VALUES (%(contact_id)s, %(slug)s, %(author_url)s,
-                        %(enrichment_status)s, %(times_seen)s, %(first_seen_at)s, %(last_seen_at)s, %(exported)s)
-                    ON CONFLICT (contact_id) DO NOTHING
-                """, new_contacts)
+    # Update existing contacts: times_seen + last_seen_at
+    if updated_contact_ids:
+        for cid in updated_contact_ids:
+            execute("""
+                UPDATE contacts
+                SET times_seen = times_seen + 1, last_seen_at = %s
+                WHERE contact_id = %s
+            """, (now, cid))
 
-            # Update existing contacts: times_seen + last_seen_at
-            if updated_contact_ids:
-                from psycopg2.extras import execute_batch
-
-                execute_batch(cur, """
-                    UPDATE contacts
-                    SET times_seen = times_seen + 1, last_seen_at = %s
-                    WHERE contact_id = %s
-                """, [(now, cid) for cid in updated_contact_ids])
-
-            # Link engagements to contacts
-            if engagement_links:
-                from psycopg2.extras import execute_batch
-
-                execute_batch(cur, """
-                    UPDATE engagements
-                    SET contact_id = %s
-                    WHERE activity_id = %s AND author_url = %s
-                """, engagement_links)
-
-        conn.commit()
+    # Link engagements to contacts
+    if engagement_links:
+        for contact_id, activity_id, author_url in engagement_links:
+            execute("""
+                UPDATE engagements
+                SET contact_id = %s
+                WHERE activity_id = %s AND author_url = %s
+            """, (contact_id, activity_id, author_url))
 
     # Write tmp outputs
     save_json(os.path.join(TMP_DIR, "new_contacts.json"), new_contacts)

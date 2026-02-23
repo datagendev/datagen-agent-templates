@@ -18,9 +18,9 @@ The user provides one of:
 
 ## Prerequisites
 
-- Python venv with `datagen-python-sdk`, `psycopg2-binary` installed
-- Environment: `DATAGEN_API_KEY`, `DATABASE_URL` (Neon Postgres)
-- Neon DB with tables: `monitored_profiles`, `posts`, `engagements`, `contacts`, `companies`
+- Python venv with `datagen-python-sdk` installed
+- Environment: `DATAGEN_API_KEY`
+- A database MCP connected in DataGen (Neon or Supabase) with tables: `monitored_profiles`, `posts`, `engagements`, `contacts`, `companies`
 
 All scripts are in `scripts/` relative to this agent's install directory.
 Set `PYTHONPATH=scripts` when running from that directory.
@@ -40,11 +40,12 @@ PYTHONPATH=scripts python3 scripts/preflight.py
 ```
 
 This checks:
-1. **Python packages** -- `datagen-python-sdk`, `psycopg2-binary` installed
-2. **Environment vars** -- `DATAGEN_API_KEY`, `DATABASE_URL` set
-3. **Database** -- connection works, all 5 tables exist
-4. **Active profiles** -- at least one monitored profile configured
-5. **DataGen API** -- API key valid, can reach the service
+1. **Python packages** -- `datagen-python-sdk` installed
+2. **Environment vars** -- `DATAGEN_API_KEY` set
+3. **DataGen API** -- API key valid, can reach the service
+4. **Database MCP** -- auto-detects Neon, Supabase, or other Postgres MCP
+5. **Database tables** -- all 5 tables exist
+6. **Active profiles** -- at least one monitored profile configured
 
 If any check fails, it prints the fix command. **Do not proceed until all checks pass.**
 

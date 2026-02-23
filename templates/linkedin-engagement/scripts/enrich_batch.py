@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 
 from datagen_sdk import DatagenClient
 
-from db import TMP_DIR, execute, get_conn, query, save_json
+from db import TMP_DIR, execute, execute_many, query, save_json
 
 MAX_ENRICH = int(os.environ.get("MAX_ENRICH", "3"))
 REENRICH_DAYS = 30
@@ -37,17 +37,17 @@ def speaker_available():
 
 
 def get_enrichable_contacts():
-    return query("""
-        SELECT contact_id, slug, author_url, enrichment_status, enriched_at
-        FROM contacts
-        WHERE enrichment_status = 'pending'
-           OR (enrichment_status = 'enriched'
-               AND enriched_at < NOW() - INTERVAL '%s days')
-        ORDER BY
-            CASE WHEN slug IS NOT NULL THEN 0 ELSE 1 END,
-            enriched_at NULLS FIRST
-        LIMIT %s
-    """ % (REENRICH_DAYS, MAX_ENRICH))
+    return query(
+        f"SELECT contact_id, slug, author_url, enrichment_status, enriched_at "
+        f"FROM contacts "
+        f"WHERE enrichment_status = 'pending' "
+        f"   OR (enrichment_status = 'enriched' "
+        f"       AND enriched_at < NOW() - INTERVAL '{REENRICH_DAYS} days') "
+        f"ORDER BY "
+        f"    CASE WHEN slug IS NOT NULL THEN 0 ELSE 1 END, "
+        f"    enriched_at NULLS FIRST "
+        f"LIMIT {MAX_ENRICH}"
+    )
 
 
 def get_existing_company_urls():
@@ -242,17 +242,19 @@ def main():
                 else:
                     failed += 1
                     print("FAILED (no data)")
-                    execute("""
-                        UPDATE contacts SET enrichment_status = 'failed'
-                        WHERE contact_id = %s
-                    """, (contact["contact_id"],))
+                    execute(
+                        "UPDATE contacts SET enrichment_status = 'failed' "
+                        "WHERE contact_id = %s",
+                        (contact["contact_id"],),
+                    )
             except Exception as e:
                 failed += 1
                 print(f"FAILED ({e})")
-                execute("""
-                    UPDATE contacts SET enrichment_status = 'failed'
-                    WHERE contact_id = %s
-                """, (contact["contact_id"],))
+                execute(
+                    "UPDATE contacts SET enrichment_status = 'failed' "
+                    "WHERE contact_id = %s",
+                    (contact["contact_id"],),
+                )
 
             if i < len(without_slug) - 1:
                 time.sleep(0.5)
@@ -261,39 +263,31 @@ def main():
 
     # Insert companies FIRST (contacts have FK to companies)
     if new_companies:
-        from psycopg2.extras import execute_batch
-
-        with get_conn() as conn:
-            with conn.cursor() as cur:
-                execute_batch(cur, """
-                    INSERT INTO companies (company_linkedin_url, name, enrichment_status)
-                    VALUES (%(company_linkedin_url)s, %(name)s, %(enrichment_status)s)
-                    ON CONFLICT (company_linkedin_url) DO NOTHING
-                """, new_companies)
-            conn.commit()
+        execute_many("""
+            INSERT INTO companies (company_linkedin_url, name, enrichment_status)
+            VALUES (%(company_linkedin_url)s, %(name)s, %(enrichment_status)s)
+            ON CONFLICT (company_linkedin_url) DO NOTHING
+        """, new_companies)
 
     # Then update contacts
-    if enriched_list:
-        with get_conn() as conn:
-            with conn.cursor() as cur:
-                for e in enriched_list:
-                    cur.execute("""
-                        UPDATE contacts
-                        SET slug = %s, first_name = %s, last_name = %s,
-                            headline = %s, title = %s, company_name = %s,
-                            company_linkedin_url = %s, location = %s,
-                            bio = %s, follower_count = %s,
-                            enrichment_status = %s, enriched_at = %s
-                        WHERE contact_id = %s
-                    """, (
-                        e["slug"], e["first_name"], e["last_name"],
-                        e["headline"], e["title"], e["company_name"],
-                        e["company_linkedin_url"], e["location"],
-                        e["bio"], e["follower_count"],
-                        e["enrichment_status"], e["enriched_at"],
-                        e["contact_id"],
-                    ))
-            conn.commit()
+    for e in enriched_list:
+        execute(
+            "UPDATE contacts "
+            "SET slug = %s, first_name = %s, last_name = %s, "
+            "    headline = %s, title = %s, company_name = %s, "
+            "    company_linkedin_url = %s, location = %s, "
+            "    bio = %s, follower_count = %s, "
+            "    enrichment_status = %s, enriched_at = %s "
+            "WHERE contact_id = %s",
+            (
+                e["slug"], e["first_name"], e["last_name"],
+                e["headline"], e["title"], e["company_name"],
+                e["company_linkedin_url"], e["location"],
+                e["bio"], e["follower_count"],
+                e["enrichment_status"], e["enriched_at"],
+                e["contact_id"],
+            ),
+        )
 
     # Write tmp outputs
     save_json(os.path.join(TMP_DIR, "enriched_contacts.json"), enriched_list)
