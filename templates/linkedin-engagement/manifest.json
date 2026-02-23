@@ -1,0 +1,56 @@
+{
+  "id": "linkedin-engagement",
+  "name": "LinkedIn Engagement Monitor",
+  "description": "Monitor LinkedIn profiles, capture engagers, enrich and export.",
+  "version": "1.0.0",
+  "category": "sales",
+  "tags": ["linkedin", "prospecting", "enrichment"],
+  "author": "datagen",
+  "requirements": {
+    "datagen_tools": [
+      {
+        "name": "get_linkedin_person_posts",
+        "description": "Fetch posts from a LinkedIn profile",
+        "required": true
+      },
+      {
+        "name": "get_linkedin_person_post_comments",
+        "description": "Get commenters on a LinkedIn post",
+        "required": true
+      },
+      {
+        "name": "get_linkedin_person_post_reactions",
+        "description": "Get likers on a LinkedIn post",
+        "required": true
+      },
+      {
+        "name": "get_linkedin_person_data",
+        "description": "Resolve and enrich a LinkedIn contact",
+        "required": true
+      }
+    ],
+    "datagen_mcps": [
+      {
+        "name": "Neon",
+        "description": "Serverless Postgres for storing contacts and engagements",
+        "tools_used": ["mcp_Neon_run_sql"],
+        "required": true,
+        "setup_url": "https://app.datagen.dev/tools"
+      },
+      {
+        "name": "Linkup",
+        "description": "Web search fallback for profile discovery",
+        "tools_used": ["mcp_Linkup_linkup_search"],
+        "required": false,
+        "setup_url": "https://app.datagen.dev/tools"
+      }
+    ],
+    "env_vars": [
+      { "name": "DATAGEN_API_KEY", "required": true },
+      { "name": "DATABASE_URL", "required": true }
+    ],
+    "python_packages": ["datagen-python-sdk>=0.2.0", "psycopg2-binary"]
+  },
+  "shared_skills": ["datagen-setup"],
+  "install_target": ".claude/agents/linkedin-engagement"
+}

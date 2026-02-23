@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "DataGen Agent Template Manifest",
+  "description": "Schema for manifest.json files in DataGen agent templates",
+  "type": "object",
+  "required": ["id", "name", "description", "version", "category", "requirements", "install_target"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Unique template identifier (lowercase, hyphens only)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable template name"
+    },
+    "description": {
+      "type": "string",
+      "description": "One-line description of what the agent does"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["sales", "marketing", "ops", "engineering", "research", "support"],
+      "description": "Primary use-case category"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Searchable tags"
+    },
+    "author": {
+      "type": "string",
+      "description": "Template author"
+    },
+    "requirements": {
+      "type": "object",
+      "required": ["env_vars"],
+      "properties": {
+        "datagen_tools": {
+          "type": "array",
+          "description": "Built-in DataGen tools (available with DATAGEN_API_KEY, no extra setup)",
+          "items": {
+            "type": "object",
+            "required": ["name", "description", "required"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Tool alias name (e.g. get_linkedin_person_data)"
+              },
+              "description": { "type": "string" },
+              "required": { "type": "boolean" }
+            }
+          }
+        },
+        "datagen_mcps": {
+          "type": "array",
+          "description": "External MCP servers that must be connected via app.datagen.dev/tools",
+          "items": {
+            "type": "object",
+            "required": ["name", "description", "tools_used", "required"],
+            "properties": {
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "tools_used": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "required": { "type": "boolean" },
+              "setup_url": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          }
+        },
+        "env_vars": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "required"],
+            "properties": {
+              "name": { "type": "string" },
+              "required": { "type": "boolean" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "python_packages": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Required pip packages with version constraints"
+        }
+      }
+    },
+    "shared_skills": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Shared skills from _shared/skills/ to install"
+    },
+    "install_target": {
+      "type": "string",
+      "description": "Where to install the agent.md file (relative to project root)"
+    }
+  },
+  "additionalProperties": false
+}

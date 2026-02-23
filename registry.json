@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "templates": [
+    {
+      "id": "linkedin-engagement",
+      "name": "LinkedIn Engagement Monitor",
+      "description": "Monitor LinkedIn profiles, capture engagers, enrich and export.",
+      "version": "1.0.0",
+      "category": "sales",
+      "tags": ["linkedin", "prospecting", "enrichment"],
+      "datagen_tools": ["get_linkedin_person_posts", "get_linkedin_person_post_comments", "get_linkedin_person_post_reactions", "get_linkedin_person_data"],
+      "datagen_mcps": ["Neon"],
+      "datagen_mcps_optional": ["Linkup"],
+      "path": "templates/linkedin-engagement"
+    }
+  ]
+}
