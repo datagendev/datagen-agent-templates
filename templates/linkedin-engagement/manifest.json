@@ -51,6 +51,20 @@
     ],
     "python_packages": ["datagen-python-sdk>=0.2.0"]
   },
+  "files": [
+    "agent.md",
+    "README.md",
+    "mcps.md",
+    "scripts/preflight.py",
+    "scripts/db.py",
+    "scripts/check_profiles.py",
+    "scripts/pull_engagements.py",
+    "scripts/dedup_contacts.py",
+    "scripts/enrich_batch.py",
+    "scripts/export.py",
+    "context/data-model.md",
+    "learnings/common_failures_and_fix.md"
+  ],
   "shared_skills": ["datagen-setup"],
   "install_target": ".claude/agents/linkedin-engagement"
 }
