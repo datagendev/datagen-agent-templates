@@ -1,5 +1,7 @@
 {
   "version": "1.0.0",
+  "index": "agents.json",
+  "note": "Use agents.json as the primary index. This file exists for backwards compatibility.",
   "templates": [
     {
       "id": "linkedin-engagement",
