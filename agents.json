@@ -7,7 +7,12 @@
       "name": "LinkedIn Engagement Monitor",
       "description": "Monitor LinkedIn profiles, capture who engages with their posts (likes + comments), deduplicate contacts, enrich via Speaker CLI or DataGen API, and export to CSV. Replaces tools like Trigify.",
       "category": "sales",
-      "tags": ["linkedin", "prospecting", "enrichment", "lead-gen"],
+      "tags": [
+        "linkedin",
+        "prospecting",
+        "enrichment",
+        "lead-gen"
+      ],
       "status": "stable",
       "datagen_tools": [
         "get_linkedin_person_posts",
@@ -19,7 +24,10 @@
         "required": [
           {
             "name": "Database",
-            "alternatives": ["Neon", "Supabase"],
+            "alternatives": [
+              "Neon",
+              "Supabase"
+            ],
             "purpose": "Postgres storage for contacts, engagements, and posts"
           }
         ],
@@ -44,8 +52,14 @@
       "name": "Email Infrastructure Health Report",
       "description": "Weekly email infrastructure health report. Fetches Instantly analytics (domain health, campaign performance, inbox status), generates a branded HTML report with benchmarks and AI-written recommendations, and emails it via Gmail.",
       "category": "email-ops",
-      "tags": ["instantly", "email", "health-report", "deliverability", "domain-health"],
-      "status": "coming-soon",
+      "tags": [
+        "instantly",
+        "email",
+        "health-report",
+        "deliverability",
+        "domain-health"
+      ],
+      "status": "stable",
       "datagen_tools": [],
       "datagen_mcps": {
         "required": [
@@ -69,14 +83,19 @@
           "required": true
         }
       ],
-      "path": null
+      "path": "templates/instantly-health-report"
     },
     {
       "id": "signup-enrichment",
       "name": "Signup Enrichment",
       "description": "Given a signup email, find the user's LinkedIn profile using a multi-step SOP: direct LinkedIn search, PostHog geolocation, web search with location context, and manual verification fallback.",
       "category": "growth",
-      "tags": ["enrichment", "signup", "linkedin", "posthog"],
+      "tags": [
+        "enrichment",
+        "signup",
+        "linkedin",
+        "posthog"
+      ],
       "status": "coming-soon",
       "datagen_tools": [
         "search_linkedin_person",
@@ -111,7 +130,12 @@
       "name": "Company One-Pager",
       "description": "Given a company name and domain, research the company across web, LinkedIn, Crunchbase, G2, and job boards, then produce a structured one-pager report with overview, key facts, products, leadership, and competitive positioning.",
       "category": "sales",
-      "tags": ["research", "company-intel", "one-pager", "abm"],
+      "tags": [
+        "research",
+        "company-intel",
+        "one-pager",
+        "abm"
+      ],
       "status": "coming-soon",
       "datagen_tools": [
         "get_linkedin_company_data",
@@ -144,14 +168,21 @@
       "name": "Competitive Intelligence",
       "description": "Research competitors with configurable depth (quick recon to deep analysis). Produces structured competitive profiles covering product, customers, positioning, technology, and team. Saves to organized company folders.",
       "category": "strategy",
-      "tags": ["research", "competitive-analysis", "market-intel"],
+      "tags": [
+        "research",
+        "competitive-analysis",
+        "market-intel"
+      ],
       "status": "coming-soon",
       "datagen_tools": [],
       "datagen_mcps": {
         "required": [
           {
             "name": "Database",
-            "alternatives": ["Neon", "Supabase"],
+            "alternatives": [
+              "Neon",
+              "Supabase"
+            ],
             "purpose": "Store competitive profiles and research history"
           }
         ],
@@ -176,25 +207,32 @@
       "path": null
     },
     {
-      "id": "shopify-abm",
-      "name": "Account-Based Marketing Intel",
-      "description": "Weekly ABM intelligence for target accounts. Researches hiring signals, news/PR, and company posts for a specific region, then compiles an email brief. Configurable for any target company and region.",
-      "category": "sales",
-      "tags": ["abm", "sales-intel", "hiring-signals", "news-monitoring"],
-      "status": "coming-soon",
+      "id": "daily-todo",
+      "name": "Daily Todo Briefing",
+      "description": "Daily briefing agent -- reads work emails, calendar, classifies meetings, enriches prospects with LinkedIn and HeyReach conversations",
+      "category": "ops",
+      "tags": ["daily-briefing", "email", "calendar", "linkedin", "heyreach", "meeting-prep"],
+      "status": "stable",
       "datagen_tools": [
-        "get_linkedin_company_data"
+        "search_linkedin_person"
       ],
       "datagen_mcps": {
-        "required": [],
-        "optional": [
+        "required": [
           {
             "name": "Gmail",
-            "purpose": "Send the ABM brief via email"
+            "alternatives": [],
+            "purpose": "Fetch unread emails for the daily briefing"
           },
           {
-            "name": "Linkup",
-            "purpose": "Web search for hiring signals and company news"
+            "name": "Google Calendar",
+            "alternatives": [],
+            "purpose": "Fetch today's calendar events for meeting classification"
+          }
+        ],
+        "optional": [
+          {
+            "name": "HeyReach",
+            "purpose": "Search outreach conversations to enrich prospect context before meetings"
           }
         ]
       },
@@ -205,7 +243,7 @@
           "required": true
         }
       ],
-      "path": null
+      "path": "templates/daily-todo"
     }
   ]
 }

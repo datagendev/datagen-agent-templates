@@ -1,0 +1,41 @@
+{
+  "id": "instantly-health-report",
+  "name": "Email Infrastructure Health Report",
+  "description": "Weekly email infrastructure health report with Instantly analytics, benchmarks, and AI recommendations.",
+  "version": "1.0.0",
+  "category": "ops",
+  "tags": ["instantly", "email", "health-report", "deliverability", "domain-health"],
+  "author": "datagen",
+  "requirements": {
+    "datagen_tools": [],
+    "datagen_mcps": [
+      {
+        "name": "Gmail",
+        "description": "Send the HTML health report via email",
+        "alternatives": [],
+        "tools_used": ["mcp_Gmail_Yusheng_gmail_send_email"],
+        "required": true,
+        "setup_url": "https://app.datagen.dev/tools"
+      }
+    ],
+    "env_vars": [
+      { "name": "DATAGEN_API_KEY", "required": true },
+      { "name": "INSTANTLY_API_KEY", "required": true }
+    ],
+    "python_packages": ["datagen-python-sdk>=0.2.0", "requests", "python-dotenv"]
+  },
+  "files": [
+    "agent.md",
+    "README.md",
+    "scripts/fetch_data.py",
+    "scripts/report_domain_health.py",
+    "scripts/report_campaign_perf.py",
+    "scripts/report_inbox_status.py",
+    "scripts/build_report_html.py",
+    "templates/base-email.html",
+    "context/email-infrastructure.md",
+    "learnings/common_failures_and_fix.md"
+  ],
+  "shared_skills": ["datagen-setup"],
+  "install_target": ".claude/agents/instantly-health-report"
+}

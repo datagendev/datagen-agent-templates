@@ -1,0 +1,56 @@
+{
+  "id": "daily-todo",
+  "name": "Daily Todo Briefing",
+  "description": "Daily briefing agent -- reads work emails, calendar, classifies meetings, enriches prospects with LinkedIn and HeyReach conversations",
+  "version": "1.0.0",
+  "category": "ops",
+  "tags": ["daily-briefing", "email", "calendar", "linkedin", "heyreach", "meeting-prep"],
+  "author": "datagen",
+  "requirements": {
+    "datagen_tools": [
+      {
+        "name": "search_linkedin_person",
+        "description": "Search LinkedIn by name to find prospect profiles (fallback when HeyReach has no match)",
+        "required": true
+      }
+    ],
+    "datagen_mcps": [
+      {
+        "name": "Gmail",
+        "description": "Fetch unread emails for the daily briefing",
+        "tools_used": ["mcp_Gmail_gmail_search_emails"],
+        "required": true,
+        "setup_url": "https://app.datagen.dev/tools"
+      },
+      {
+        "name": "Google Calendar",
+        "description": "Fetch today's calendar events for meeting classification",
+        "tools_used": ["mcp_Google_Calendar_calendar_list_events"],
+        "required": true,
+        "setup_url": "https://app.datagen.dev/tools"
+      },
+      {
+        "name": "HeyReach",
+        "description": "Search outreach conversations to enrich prospect context before meetings",
+        "tools_used": ["mcp_Heyreach_get_conversations_v2"],
+        "required": false,
+        "setup_url": "https://app.datagen.dev/tools"
+      }
+    ],
+    "env_vars": [
+      { "name": "DATAGEN_API_KEY", "required": true, "description": "DataGen platform API key for LinkedIn search" }
+    ],
+    "python_packages": []
+  },
+  "files": [
+    "agent.md",
+    "README.md",
+    "context/output-template.md",
+    "context/criteria.md",
+    "context/domain-context.md",
+    "context/data-model.md",
+    "learnings/common_failures_and_fix.md"
+  ],
+  "shared_skills": ["datagen-setup"],
+  "install_target": ".claude/agents/daily-todo"
+}
