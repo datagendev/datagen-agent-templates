@@ -90,7 +90,7 @@ def build_domain_health(raw_dir, days):
         if placement is not None:
             domain_warmup[domain]["placement_rates"].append(float(placement))
 
-    # Account counts by domain
+    # Account counts by domain (from /accounts endpoint)
     domain_account_total = defaultdict(int)
     domain_account_active = defaultdict(int)
     for acct in accounts_data:
@@ -100,6 +100,21 @@ def build_domain_health(raw_dir, days):
         status = acct.get("status", "")
         if status in ("active", 1, "1"):
             domain_account_active[domain] += 1
+
+    # Also count unique accounts from analytics for domains not in /accounts
+    # (accounts may have been removed but still have historical send data)
+    domain_analytics_accounts = defaultdict(set)
+    for row in analytics:
+        email = row.get("email_account", "")
+        if email:
+            domain = extract_domain(email)
+            domain_analytics_accounts[domain].add(email)
+
+    for domain, emails in domain_analytics_accounts.items():
+        if domain not in domain_account_total or domain_account_total[domain] == 0:
+            domain_account_total[domain] = len(emails)
+            # Mark as active since they have recent send data
+            domain_account_active[domain] = len(emails)
 
     # Merge all domains
     all_domains = sorted(
