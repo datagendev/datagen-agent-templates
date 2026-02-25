@@ -19,14 +19,12 @@ This means you do NOT generate tables, badges, or layout HTML. The script handle
 
 ### Step 1: Gather Data
 
-**1a. Fetch raw data (skip if cached)**
+**1a. Fetch raw data**
 
-Check if `./tmp/instantly-analytics/raw/account_analytics.json` exists:
-- If yes: skip fetch
-- If no: run fetch
+Always force a fresh fetch to get the latest data:
 
 ```bash
-python3 .datagen/instantly-health-report/scripts/fetch_data.py --days 30
+python3 .datagen/instantly-health-report/scripts/fetch_data.py --days 30 --force
 ```
 
 **1b. Generate all 3 analytics reports**

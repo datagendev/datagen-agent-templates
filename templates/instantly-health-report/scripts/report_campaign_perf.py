@@ -85,7 +85,9 @@ def build_campaign_performance(raw_dir, days):
         cid = c.get("campaign_id", "")
         sent = c.get("emails_sent_count", 0)
         contacted = c.get("leads_contacted_count", c.get("contacted", 0))
-        replied = c.get("reply_count", 0)
+        # Use email-attributed reply count (from replies.json, date-filtered)
+        # instead of campaign API reply_count which is all-time and undercounts threads
+        replied = campaign_reply_count.get(cid, 0)
         unique_replies = c.get("unique_reply_count", c.get("replies_unique", 0))
         bounced = c.get("bounced_count", c.get("bounces", 0))
         opps = c.get("total_opportunities", c.get("opportunities", 0))
